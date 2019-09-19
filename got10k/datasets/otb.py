@@ -69,7 +69,7 @@ class OTB(object):
         'tb50': __tb50_seqs,
         'tb100': __tb100_seqs}
 
-    def __init__(self, root_dir, version=2015, download=True):
+    def __init__(self, root_dir, version=2015, download=True, seq_idx=None):
         super(OTB, self).__init__()
         assert version in self.__version_dict
 
@@ -80,6 +80,8 @@ class OTB(object):
         self._check_integrity(root_dir, version)
 
         valid_seqs = self.__version_dict[version]
+        if seq_idx is not None:
+            valid_seqs = [valid_seqs[seq_idx]]
         self.anno_files = sorted(list(chain.from_iterable(glob.glob(
             os.path.join(root_dir, s, 'groundtruth*.txt')) for s in valid_seqs)))
         # remove empty annotation files
@@ -125,6 +127,12 @@ class OTB(object):
         # to deal with different delimeters
         with open(self.anno_files[index], 'r') as f:
             anno = np.loadtxt(io.StringIO(f.read().replace(',', ' ')))
+
+        # modified by Paul
+        if seq_name.lower() == 'tiger1':
+            img_files = img_files[5:]
+            anno = anno[5:]
+
         assert len(img_files) == len(anno)
         assert anno.shape[1] == 4
 

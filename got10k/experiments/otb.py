@@ -25,9 +25,9 @@ class ExperimentOTB(object):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, version=2015,
-                 result_dir='results', report_dir='reports'):
+                 result_dir='results', report_dir='reports', seq_idx=None):
         super(ExperimentOTB, self).__init__()
-        self.dataset = OTB(root_dir, version, download=True)
+        self.dataset = OTB(root_dir, version, download=True, seq_idx=seq_idx)
         self.result_dir = os.path.join(result_dir, 'OTB' + str(version))
         self.report_dir = os.path.join(report_dir, 'OTB' + str(version))
         # as nbins_iou increases, the success score
@@ -51,10 +51,16 @@ class ExperimentOTB(object):
                 print('  Found results, skipping', seq_name)
                 continue
 
+            if hasattr(tracker, 'set_video_name'):
+                tracker.set_video_name(seq_name)
+
             # tracking loop
             boxes, times = tracker.track(
                 img_files, anno[0, :], visualize=visualize)
             assert len(boxes) == len(anno)
+
+            if hasattr(tracker, 'set_video_name'):
+                tracker.set_video_name(None)
             
             # record results
             self._record(record_file, boxes, times)

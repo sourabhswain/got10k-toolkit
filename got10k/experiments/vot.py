@@ -42,7 +42,7 @@ class ExperimentVOT(object):
     def __init__(self, root_dir, version=2017,
                  read_image=True, list_file=None,
                  experiments=('supervised', 'unsupervised', 'realtime'),
-                 result_dir='results', report_dir='reports'):
+                 result_dir='results', report_dir='reports', start_idx=0, end_idx=None):
         super(ExperimentVOT, self).__init__()
         if isinstance(experiments, str):
             experiments = (experiments,)
@@ -64,6 +64,12 @@ class ExperimentVOT(object):
         self.nbins_eao = 1500
         self.tags = ['camera_motion', 'illum_change', 'occlusion',
                      'size_change', 'motion_change', 'empty']
+        self.start_idx = start_idx
+        self.end_idx = end_idx
+        if self.start_idx is None:
+            self.start_idx = 0
+        if self.end_idx is None:
+            self.end_idx = len(self.dataset)
 
     def run(self, tracker, visualize=False):
         print('Running tracker %s on %s...' % (
@@ -81,7 +87,9 @@ class ExperimentVOT(object):
         print('Running supervised experiment...')
 
         # loop over the complete dataset
-        for s, (img_files, anno, _) in enumerate(self.dataset):
+        #for s, (img_files, anno, _) in enumerate(self.dataset):
+        for s in range(self.start_idx, self.end_idx):
+            img_files, anno, _ = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
 
