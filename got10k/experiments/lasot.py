@@ -26,7 +26,7 @@ class ExperimentLaSOT(ExperimentOTB):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, subset='test', return_meta=False,
-                 result_dir='results', report_dir='reports'):
+                 result_dir='results', report_dir='reports', start_idx=0, end_idx=None):
         # assert subset.upper() in ['TRAIN', 'TEST']
         self.dataset = LaSOT(root_dir, subset, return_meta=return_meta)
         self.result_dir = result_dir
@@ -37,6 +37,11 @@ class ExperimentLaSOT(ExperimentOTB):
         self.nbins_iou = 21
         self.nbins_ce = 51
         self.nbins_nce = 51
+
+        self.start_idx = start_idx
+        self.end_idx = end_idx
+        if self.end_idx is None:
+            self.end_idx = len(self.dataset)
 
     def report(self, tracker_names):
         assert isinstance(tracker_names, (list, tuple))

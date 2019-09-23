@@ -92,6 +92,9 @@ class OTB(object):
         # rename repeated sequence names
         # (e.g., Jogging and Skating2)
         self.seq_names = self._rename_seqs(self.seq_names)
+        print(len(self.seq_names))
+        for idx, seq_name in enumerate(self.seq_names):
+            print(idx, seq_name)
 
     def __getitem__(self, index):
         r"""        
