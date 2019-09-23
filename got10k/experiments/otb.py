@@ -25,22 +25,26 @@ class ExperimentOTB(object):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, version=2015,
-                 result_dir='results', report_dir='reports', seq_idx=None):
+                 result_dir='results', report_dir='reports', start_idx=0, end_idx=98):
         super(ExperimentOTB, self).__init__()
-        self.dataset = OTB(root_dir, version, download=True, seq_idx=seq_idx)
+        self.dataset = OTB(root_dir, version, download=True)
         self.result_dir = os.path.join(result_dir, 'OTB' + str(version))
         self.report_dir = os.path.join(report_dir, 'OTB' + str(version))
         # as nbins_iou increases, the success score
         # converges to the average overlap (AO)
         self.nbins_iou = 21
         self.nbins_ce = 51
+        self.start_idx = start_idx
+        self.end_idx = end_idx
 
     def run(self, tracker, visualize=False):
         print('Running tracker %s on %s...' % (
             tracker.name, type(self.dataset).__name__))
 
         # loop over the complete dataset
-        for s, (img_files, anno) in enumerate(self.dataset):
+        #for s, (img_files, anno) in enumerate(self.dataset):
+        for s in range(self.start_idx, self.end_idx):
+            img_files, anno = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
 

@@ -66,8 +66,6 @@ class ExperimentVOT(object):
                      'size_change', 'motion_change', 'empty']
         self.start_idx = start_idx
         self.end_idx = end_idx
-        if self.start_idx is None:
-            self.start_idx = 0
         if self.end_idx is None:
             self.end_idx = len(self.dataset)
 
