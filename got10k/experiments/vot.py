@@ -54,6 +54,9 @@ class ExperimentVOT(object):
         self.experiments = experiments
         if version == 'LT2018':
             version = '-' + version
+            self.long_term = True
+        else:
+            self.long_term = False
         self.read_image = read_image
         self.result_dir = os.path.join(result_dir, 'VOT' + str(version))
         self.report_dir = os.path.join(report_dir, 'VOT' + str(version))
@@ -165,15 +168,20 @@ class ExperimentVOT(object):
                             show_frame(image, boxes[-1])
                         else:
                             show_frame(image)
-                
+
                 # record results
-                self._record(record_file, boxes, times)
+                if self.long_term:
+                    self._record(record_file, boxes, times, confs)
+                else:
+                    self._record(record_file, boxes, times)
 
     def run_unsupervised(self, tracker, visualize=False):
         print('Running unsupervised experiment...')
 
         # loop over the complete dataset
-        for s, (img_files, anno, _) in enumerate(self.dataset):
+        #for s, (img_files, anno, _) in enumerate(self.dataset):
+        for s in range(self.start_idx, self.end_idx):
+            img_files, anno, _ = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
 
@@ -191,16 +199,24 @@ class ExperimentVOT(object):
                 anno_rects = self.dataset._corner2rect(anno_rects)
 
             # tracking loop
-            boxes, times = tracker.track(
-                img_files, anno_rects[0], visualize=visualize)
-            assert len(boxes) == len(anno)
+            if self.long_term:
+                boxes, times, confs = tracker.track(
+                    img_files, anno_rects[0], visualize=visualize, use_confidences=True)
+                assert len(boxes) == len(anno) == len(confs)
+            else:
+                boxes, times = tracker.track(
+                    img_files, anno_rects[0], visualize=visualize)
+                assert len(boxes) == len(anno)
 
             # re-formatting
             boxes = list(boxes)
             boxes[0] = [1]
-            
+
             # record results
-            self._record(record_file, boxes, times)
+            if self.long_term:
+                self._record(record_file, boxes, times, confs)
+            else:
+                self._record(record_file, boxes, times)
 
     def run_realtime(self, tracker, visualize=False):
         print('Running real-time experiment...')
@@ -517,7 +533,7 @@ class ExperimentVOT(object):
                            colors=['w', 'r', 'g', 'b', 'c', 'm', 'y',
                                    'orange', 'purple', 'brown', 'pink'])
 
-    def _record(self, record_file, boxes, times):
+    def _record(self, record_file, boxes, times, confs=None):
         # convert boxes to string
         lines = []
         for box in boxes:
@@ -533,6 +549,17 @@ class ExperimentVOT(object):
         with open(record_file, 'w') as f:
             f.write(str.join('\n', lines))
         print('  Results recorded at', record_file)
+
+        # record confidences (if available)
+        if confs is not None:
+            # convert confs to string
+            lines = ['%.4f' % c for c in confs]
+            lines[0] = ''
+
+            conf_file = record_file.replace(".txt", "_confidence.txt")
+            with open(conf_file, 'w') as f:
+                f.write(str.join('\n', lines))
+
 
         # convert times to string
         lines = ['%.4f' % t for t in times]
