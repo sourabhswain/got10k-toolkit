@@ -43,6 +43,7 @@ class Tracker(object):
                 else:
                     boxes[f, :] = self.update(image)
             times[f] = time.time() - start_time
+            print(f, len(img_files), time.time() - start_time)
 
             if visualize:
                 show_frame(image, boxes[f, :])

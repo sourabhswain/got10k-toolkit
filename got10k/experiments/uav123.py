@@ -19,7 +19,7 @@ class ExperimentUAV123(ExperimentOTB):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, version='UAV123',
-                 result_dir='results', report_dir='reports'):
+                 result_dir='results', report_dir='reports', start_idx=0, end_idx=None):
         assert version.upper() in ['UAV123', 'UAV20L']
         self.dataset = UAV123(root_dir, version)
         self.result_dir = os.path.join(result_dir, version.upper())
@@ -28,6 +28,11 @@ class ExperimentUAV123(ExperimentOTB):
         # converges to the average overlap (AO)
         self.nbins_iou = 21
         self.nbins_ce = 51
+
+        self.start_idx = start_idx
+        self.end_idx = end_idx
+        if end_idx is None:
+            self.end_idx = 123
 
     def _calc_metrics(self, boxes, anno):
         valid = ~np.any(np.isnan(anno), axis=1)

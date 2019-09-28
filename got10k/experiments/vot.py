@@ -88,8 +88,10 @@ class ExperimentVOT(object):
         print('Running supervised experiment...')
 
         # loop over the complete dataset
-        #for s, (img_files, anno, _) in enumerate(self.dataset):
-        for s in range(self.start_idx, self.end_idx):
+        end_idx = self.end_idx
+        if end_idx is None:
+            end_idx = len(self.dataset)
+        for s in range(self.start_idx, end_idx):
             img_files, anno, _ = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
@@ -179,8 +181,10 @@ class ExperimentVOT(object):
         print('Running unsupervised experiment...')
 
         # loop over the complete dataset
-        #for s, (img_files, anno, _) in enumerate(self.dataset):
-        for s in range(self.start_idx, self.end_idx):
+        end_idx = self.end_idx
+        if end_idx is None:
+            end_idx = len(self.dataset)
+        for s in range(self.start_idx, end_idx):
             img_files, anno, _ = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
@@ -192,6 +196,9 @@ class ExperimentVOT(object):
             if os.path.exists(record_file):
                 print('  Found results, skipping', seq_name)
                 continue
+
+            if hasattr(tracker, 'set_video_name'):
+                tracker.set_video_name(seq_name)
 
             # rectangular bounding boxes
             anno_rects = anno.copy()
@@ -207,6 +214,9 @@ class ExperimentVOT(object):
                 boxes, times = tracker.track(
                     img_files, anno_rects[0], visualize=visualize)
                 assert len(boxes) == len(anno)
+
+            if hasattr(tracker, 'set_video_name'):
+                tracker.set_video_name(None)
 
             # re-formatting
             boxes = list(boxes)

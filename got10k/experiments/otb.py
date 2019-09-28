@@ -25,7 +25,7 @@ class ExperimentOTB(object):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, version=2015,
-                 result_dir='results', report_dir='reports', start_idx=0, end_idx=98):
+                 result_dir='results', report_dir='reports', start_idx=0, end_idx=None):
         super(ExperimentOTB, self).__init__()
         self.dataset = OTB(root_dir, version, download=True)
         self.result_dir = os.path.join(result_dir, 'OTB' + str(version))
@@ -36,6 +36,8 @@ class ExperimentOTB(object):
         self.nbins_ce = 51
         self.start_idx = start_idx
         self.end_idx = end_idx
+        if end_idx is None:
+            self.end_idx = 98
 
     def run(self, tracker, visualize=False):
         print('Running tracker %s on %s...' % (
@@ -43,7 +45,10 @@ class ExperimentOTB(object):
 
         # loop over the complete dataset
         #for s, (img_files, anno) in enumerate(self.dataset):
-        for s in range(self.start_idx, self.end_idx):
+        end_idx = self.end_idx
+        if end_idx is None:
+            end_idx = len(self.dataset)
+        for s in range(self.start_idx, end_idx):
             img_files, anno = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (s + 1, len(self.dataset), seq_name))
