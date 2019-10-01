@@ -566,7 +566,7 @@ class ExperimentVOT(object):
             lines = ['%.4f' % c for c in confs]
             lines[0] = ''
 
-            conf_file = record_file.replace(".txt", "_confidence.txt")
+            conf_file = record_file.replace(".txt", "_confidence.value")
             with open(conf_file, 'w') as f:
                 f.write(str.join('\n', lines))
 

@@ -102,7 +102,7 @@ class ExperimentOTB(object):
                 boxes = np.loadtxt(record_file, delimiter=',')
                 boxes[0] = anno[0]
                 if not (len(boxes) == len(anno)):
-                    print('warning: %s anno donnot match boxes'%seq_name)
+                    print('warning: %s anno do not match boxes' % seq_name)
                     len_min = min(len(boxes),len(anno))
                     boxes = boxes[:len_min]
                     anno = anno[:len_min]
