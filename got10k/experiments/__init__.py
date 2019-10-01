@@ -10,3 +10,6 @@ from .tcolor128 import ExperimentTColor128
 
 from .lasot import ExperimentLaSOT
 from .trackingnet import ExperimentTrackingNet
+
+from .davis import ExperimentDAVIS
+from .youtubevos import ExperimentYouTubeVOS

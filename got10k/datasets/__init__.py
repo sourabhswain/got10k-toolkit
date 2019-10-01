@@ -10,3 +10,6 @@ from .nfs import NfS
 from .lasot import LaSOT
 from .trackingnet import TrackingNet
 from .vid import ImageNetVID
+
+from .davis import DAVIS_Like, DAVIS
+from .youtubevos import YouTubeVOS

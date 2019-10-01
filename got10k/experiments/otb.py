@@ -38,6 +38,7 @@ class ExperimentOTB(object):
         self.end_idx = end_idx
         if end_idx is None:
             self.end_idx = 98
+        self.use_confs = False
 
     def run(self, tracker, visualize=False):
         print('Running tracker %s on %s...' % (
@@ -62,15 +63,23 @@ class ExperimentOTB(object):
                 tracker.set_video_name(seq_name)
 
             # tracking loop
-            boxes, times = tracker.track(
-                img_files, anno[0, :], visualize=visualize)
-            assert len(boxes) == len(anno)
+            if self.use_confs:
+                boxes, times, confs = tracker.track(
+                    img_files, anno[0, :], visualize=visualize, use_confidences=True)
+                assert len(boxes) == len(anno) == len(confs)
+            else:
+                boxes, times = tracker.track(
+                    img_files, anno[0, :], visualize=visualize)
+                assert len(boxes) == len(anno)
 
             if hasattr(tracker, 'set_video_name'):
                 tracker.set_video_name(None)
             
             # record results
-            self._record(record_file, boxes, times)
+            if self.use_confs:
+                self._record(record_file, boxes, times, confs)
+            else:
+                self._record(record_file, boxes, times)
 
     def report(self, tracker_names, plot_curves=True):
         assert isinstance(tracker_names, (list, tuple))
