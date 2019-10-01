@@ -33,7 +33,7 @@ class ExperimentGOT10k(object):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, subset='val', list_file=None,
-                 result_dir='results', report_dir='reports', use_dataset=True):
+                 result_dir='results', report_dir='reports', use_dataset=True, start_idx=0, end_idx=None):
         super(ExperimentGOT10k, self).__init__()
         assert subset in ['val', 'test']
         self.subset = subset
@@ -44,6 +44,8 @@ class ExperimentGOT10k(object):
         self.report_dir = os.path.join(report_dir, 'GOT-10k')
         self.nbins_iou = 101
         self.repetitions = 3
+        self.start_idx = start_idx
+        self.end_idx = end_idx
 
     def run(self, tracker, visualize=False, save_video=False):
         if self.subset == 'test':
@@ -57,8 +59,11 @@ class ExperimentGOT10k(object):
         print('Running tracker %s on GOT-10k...' % tracker.name)
         self.dataset.return_meta = False
 
-        # loop over the complete dataset
-        for s, (img_files, anno) in enumerate(self.dataset):
+        end_idx = self.end_idx
+        if end_idx is None:
+            end_idx = len(self.dataset)
+        for s in range(self.start_idx, end_idx):
+            img_files, anno = self.dataset[s]
             seq_name = self.dataset.seq_names[s]
             print('--Sequence %d/%d: %s' % (
                 s + 1, len(self.dataset), seq_name))

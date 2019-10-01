@@ -43,8 +43,6 @@ class ExperimentOTB(object):
         print('Running tracker %s on %s...' % (
             tracker.name, type(self.dataset).__name__))
 
-        # loop over the complete dataset
-        #for s, (img_files, anno) in enumerate(self.dataset):
         end_idx = self.end_idx
         if end_idx is None:
             end_idx = len(self.dataset)
