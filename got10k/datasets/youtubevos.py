@@ -10,7 +10,7 @@ class YouTubeVOS(DAVIS_Like):
         img_version = version
         if use_all_frames:
             img_version += "_all_frames"
-        img_dir = os.path.join(root_dir, version, "JPEGImages")
+        img_dir = os.path.join(root_dir, img_version, "JPEGImages")
         ann_dir = os.path.join(root_dir, version, "Annotations")
 
         seqs = [x.split("/")[-2] for x in sorted(glob.glob(ann_dir + "/*/"))]
@@ -49,7 +49,6 @@ class YouTubeVOS(DAVIS_Like):
         start_time, ff_mask = self._start_times_and_ff_masks[index]
         seq_name = self.seq_names[index]
         sp = seq_name.split("__")
-        obj_id = int(sp[1])
         img_files = sorted(glob.glob(os.path.join(self.img_dir, sp[0], "*.jpg")))
         img_files = [x for x in img_files if int(x.split("/")[-1].replace(".jpg", "")) >= start_time]
         anno = np.full((len(img_files), 4), fill_value=np.nan)
