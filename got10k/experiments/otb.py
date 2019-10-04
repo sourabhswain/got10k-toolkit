@@ -254,8 +254,8 @@ class ExperimentOTB(object):
         with open(report_file) as f:
             performance = json.load(f)
 
-        succ_file = os.path.join(report_dir, 'success_plots.png')
-        prec_file = os.path.join(report_dir, 'precision_plots.png')
+        succ_file = os.path.join(report_dir, 'success_plots.pdf')
+        prec_file = os.path.join(report_dir, 'precision_plots.pdf')
         key = 'overall'
 
         # markers
@@ -279,11 +279,10 @@ class ExperimentOTB(object):
                             markers[i % len(markers)])
             lines.append(line)
             legends.append('%s: [%.3f]' % (name, performance[name][key]['success_score']))
-        matplotlib.rcParams.update({'font.size': 7.4})
-        legend = ax.legend(lines, legends, loc='center left',
-                           bbox_to_anchor=(1, 0.5))
+        matplotlib.rcParams.update({'font.size': 11.0})
+        legend = ax.legend(lines, legends, loc='lower left')
 
-        matplotlib.rcParams.update({'font.size': 9})
+        matplotlib.rcParams.update({'font.size': 11})
         ax.set(xlabel='Overlap threshold',
                ylabel='Success rate',
                xlim=(0, 1), ylim=(0, 1),
@@ -300,7 +299,8 @@ class ExperimentOTB(object):
         # sort trackers by precision score
         tracker_names = list(performance.keys())
         prec = [t[key]['precision_score'] for t in performance.values()]
-        inds = np.argsort(prec)[::-1]
+        # modified by Paul: instead use sorting from before so that colors of both plots are consistent
+        #inds = np.argsort(prec)[::-1]
         tracker_names = [tracker_names[i] for i in inds]
 
         # plot precision curves
@@ -314,11 +314,10 @@ class ExperimentOTB(object):
                             markers[i % len(markers)])
             lines.append(line)
             legends.append('%s: [%.3f]' % (name, performance[name][key]['precision_score']))
-        matplotlib.rcParams.update({'font.size': 7.4})
-        legend = ax.legend(lines, legends, loc='center left',
-                           bbox_to_anchor=(1, 0.5))
+        matplotlib.rcParams.update({'font.size': 11.0})
+        legend = ax.legend(lines, legends, loc='lower right')
         
-        matplotlib.rcParams.update({'font.size': 9})
+        matplotlib.rcParams.update({'font.size': 11})
         ax.set(xlabel='Location error threshold',
                ylabel='Precision',
                xlim=(0, thr_ce.max()), ylim=(0, 1),
