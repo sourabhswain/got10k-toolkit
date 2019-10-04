@@ -7,10 +7,11 @@ from multiprocessing import Pool
 
 
 class DAVIS_Like:
-    def __init__(self, img_dir, ann_dir, seq_names):
+    def __init__(self, img_dir, ann_dir, seq_names, multiobject=True):
         self.img_dir = img_dir
         self.ann_dir = ann_dir
         self.seq_names = seq_names
+        self._multiobject = multiobject
 
     def __getitem__(self, index):
         r"""
@@ -23,13 +24,13 @@ class DAVIS_Like:
         """
         seq_name_maybe_with_obj_id = self.seq_names[index]
         sp = seq_name_maybe_with_obj_id.split("__")
-        seq_name_raw = seq_name_maybe_with_obj_id.split("__")[0]
-        if len(sp) > 1:
+        seq_name_raw = sp[0]
+        if len(sp) > 1 and self._multiobject:
             obj_id = int(sp[1])
         else:
             obj_id = None
-        ann_files = sorted(glob.glob(os.path.join(self.ann_dir, seq_name_raw, "*.png")))
-        img_files = [x.replace(self.ann_dir, self.img_dir).replace(".png", ".jpg") for x in ann_files]
+        img_files = sorted(glob.glob(os.path.join(self.img_dir, seq_name_raw, "*.jpg")))
+        ann_files = [x.replace(self.img_dir, self.ann_dir).replace(".jpg", ".png") for x in img_files]
 
         with Pool(8) as pool:
             anno = pool.map(partial(png_to_rect, obj_id=obj_id), ann_files)
@@ -51,10 +52,12 @@ class DAVIS(DAVIS_Like):
                 seq_names.append(l.strip())
         img_dir = os.path.join(root_dir, "JPEGImages", "480p")
         ann_dir = os.path.join(root_dir, "Annotations", "480p")
-        super().__init__(img_dir, ann_dir, seq_names)
+        super().__init__(img_dir, ann_dir, seq_names, multiobject=version != "2016_val")
 
 
 def png_to_rect(ann_filename, obj_id):
+    if not os.path.exists(ann_filename):
+        return np.array([np.nan, np.nan, np.nan, np.nan])
     ann = np.array(PIL.Image.open(ann_filename))
     if obj_id is None:
         ann = (ann > 0).astype(np.uint8)

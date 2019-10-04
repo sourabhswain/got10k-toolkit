@@ -87,10 +87,16 @@ class ExperimentGOT10k(object):
                 if os.path.exists(record_file):
                     print('  Found results, skipping', seq_name)
                     continue
+            
+                if hasattr(tracker, 'set_video_name'):
+                    tracker.set_video_name(seq_name)
 
                 # tracking loop
                 boxes, times = tracker.track(
                     img_files, anno[0, :], visualize=visualize)
+            
+                if hasattr(tracker, 'set_video_name'):
+                    tracker.set_video_name(None)
                 
                 # record results
                 self._record(record_file, boxes, times)
