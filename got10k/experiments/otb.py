@@ -37,7 +37,7 @@ class ExperimentOTB(object):
         self.start_idx = start_idx
         self.end_idx = end_idx
         if end_idx is None:
-            self.end_idx = 98
+            self.end_idx = 100
         self.use_confs = False
 
     def run(self, tracker, visualize=False):

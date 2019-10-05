@@ -19,18 +19,26 @@ def center_error(rects1, rects2):
 
     return errors
 
+
 def normalized_center_error(rects1, rects2):
     r"""Center error normalized by the size of ground truth.
 
     Args:
         rects1 (numpy.ndarray): prediction box. An N x 4 numpy array, each line represent a rectangle
             (left, top, width, height).
-        rects2 (numpy.ndarray): groudn truth box. An N x 4 numpy array, each line represent a rectangle
+        rects2 (numpy.ndarray): ground truth box. An N x 4 numpy array, each line represent a rectangle
             (left, top, width, height).
     """
     centers1 = rects1[..., :2] + (rects1[..., 2:] - 1) / 2
     centers2 = rects2[..., :2] + (rects2[..., 2:] - 1) / 2
-    errors = np.sqrt(np.sum(np.power((centers1 - centers2)/np.maximum(np.array([[1.,1.]]), rects2[:, 2:]), 2), axis=-1))
+    errors = np.sqrt(np.sum(np.power((centers1 - centers2)/np.maximum(np.array([[1., 1.]]), rects2[:, 2:]), 2),
+                            axis=-1))
+
+    # TODO: in the official toolkit they filter out stuff where the size of ground truth is 0
+    # let's try it...
+    # not sure about it...
+    #valid_mask = (rects2 > 0).all(axis=1)
+    #errors = errors[valid_mask]
 
     return errors
 

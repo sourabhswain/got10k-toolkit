@@ -73,14 +73,17 @@ class ExperimentLaSOT(ExperimentOTB):
                 boxes[0] = anno[0]
                 if not (len(boxes) == len(anno)):
                     # from IPython import embed;embed()
-                    print('warning: %s anno donnot match boxes'%seq_name)
-                    len_min = min(len(boxes),len(anno))
+                    print('warning: %s anno do not match boxes' % seq_name)
+                    len_min = min(len(boxes), len(anno))
                     boxes = boxes[:len_min]
                     anno = anno[:len_min]
                 assert len(boxes) == len(anno)
 
+                # TODO: we need to filter out frames where the object is absent
+
                 ious, center_errors, norm_center_errors = self._calc_metrics(boxes, anno)
-                succ_curve[s], prec_curve[s], norm_prec_curve[s] = self._calc_curves(ious, center_errors, norm_center_errors)
+                succ_curve[s], prec_curve[s], norm_prec_curve[s] = self._calc_curves(ious, center_errors,
+                                                                                     norm_center_errors)
 
                 # calculate average tracking speed
                 time_file = os.path.join(
@@ -107,7 +110,11 @@ class ExperimentLaSOT(ExperimentOTB):
             norm_prec_curve = np.mean(norm_prec_curve, axis=0)
             succ_score = np.mean(succ_curve)
             prec_score = prec_curve[20]
-            norm_prec_score = np.mean(norm_prec_curve)
+
+            #TODO: this might be wrong
+            #norm_prec_score = np.mean(norm_prec_curve)
+            norm_prec_score = norm_prec_curve[20]
+
             succ_rate = succ_curve[self.nbins_iou // 2]
             if np.count_nonzero(speeds) > 0:
                 avg_speed = np.sum(speeds) / np.count_nonzero(speeds)
