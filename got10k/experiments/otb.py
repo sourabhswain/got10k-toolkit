@@ -276,7 +276,8 @@ class ExperimentOTB(object):
         for i, name in enumerate(tracker_names):
             line, = ax.plot(thr_iou,
                             performance[name][key]['success_curve'],
-                            markers[i % len(markers)])
+                            markers[i % len(markers)],
+                            linewidth=4)
             lines.append(line)
             legends.append('%s: [%.3f]' % (name, performance[name][key]['success_score']))
         matplotlib.rcParams.update({'font.size': 11.0})
@@ -287,6 +288,8 @@ class ExperimentOTB(object):
                ylabel='Success rate',
                xlim=(0, 1), ylim=(0, 1),
                title='Success plots of OPE')
+        ax.xaxis.label.set_size(13)
+        ax.yaxis.label.set_size(13)
         ax.grid(True)
         fig.tight_layout()
         
@@ -311,7 +314,8 @@ class ExperimentOTB(object):
         for i, name in enumerate(tracker_names):
             line, = ax.plot(thr_ce,
                             performance[name][key]['precision_curve'],
-                            markers[i % len(markers)])
+                            markers[i % len(markers)],
+                            linewidth=4)
             lines.append(line)
             legends.append('%s: [%.3f]' % (name, performance[name][key]['precision_score']))
         matplotlib.rcParams.update({'font.size': 11.0})
@@ -322,6 +326,8 @@ class ExperimentOTB(object):
                ylabel='Precision',
                xlim=(0, thr_ce.max()), ylim=(0, 1),
                title='Precision plots of OPE')
+        ax.xaxis.label.set_size(13)
+        ax.yaxis.label.set_size(13)
         ax.grid(True)
         fig.tight_layout()
         

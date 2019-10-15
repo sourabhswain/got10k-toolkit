@@ -364,19 +364,22 @@ class ExperimentGOT10k(object):
         for i, name in enumerate(tracker_names):
             line, = ax.plot(thr_iou,
                             performance[name][key]['succ_curve'],
-                            markers[i % len(markers)])
+                            markers[i % len(markers)],
+                            linewidth=4)
             lines.append(line)
             legends.append('%s: [%.3f]' % (
                 name, performance[name][key]['ao']))
-        matplotlib.rcParams.update({'font.size': 7.4})
+        matplotlib.rcParams.update({'font.size': 11.0})
         legend = ax.legend(lines, legends, loc='lower left',
                            bbox_to_anchor=(0., 0.))
         
-        matplotlib.rcParams.update({'font.size': 9})
+        matplotlib.rcParams.update({'font.size': 11})
         ax.set(xlabel='Overlap threshold',
                ylabel='Success rate',
                xlim=(0, 1), ylim=(0, 1),
                title='Success plots on GOT-10k')
+        ax.xaxis.label.set_size(13)
+        ax.yaxis.label.set_size(13)
         ax.grid(True)
         fig.tight_layout()
         
