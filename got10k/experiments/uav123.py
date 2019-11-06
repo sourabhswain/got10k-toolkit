@@ -33,6 +33,7 @@ class ExperimentUAV123(ExperimentOTB):
         self.end_idx = end_idx
         if end_idx is None:
             self.end_idx = 123
+        self.use_confs = False
 
     def _calc_metrics(self, boxes, anno):
         valid = ~np.any(np.isnan(anno), axis=1)

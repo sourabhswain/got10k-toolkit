@@ -63,7 +63,7 @@ class ExperimentOTB(object):
                 tracker.set_video_name(seq_name)
 
             # tracking loop
-            if self.use_confs:
+            if hasattr(self, "use_confs") and self.use_confs:
                 boxes, times, confs = tracker.track(
                     img_files, anno[0, :], visualize=visualize, use_confidences=True)
                 assert len(boxes) == len(anno) == len(confs)
@@ -76,7 +76,7 @@ class ExperimentOTB(object):
                 tracker.set_video_name(None)
             
             # record results
-            if self.use_confs:
+            if hasattr(self, 'use_confs') and self.use_confs:
                 self._record(record_file, boxes, times, confs)
             else:
                 self._record(record_file, boxes, times)
