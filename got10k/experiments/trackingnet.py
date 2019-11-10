@@ -24,16 +24,22 @@ class ExperimentTrackingNet(ExperimentOTB):
             evaluation results. Default is ``./reports``.
     """
     def __init__(self, root_dir, subset='test', return_meta=False,
-                 result_dir='results', report_dir='reports'):
+                 result_dir='results', report_dir='reports', start_idx=0, end_idx=None):
         assert subset.upper() in ['TRAIN', 'TEST']
         self.dataset = TrackingNet(root_dir, subset, return_meta=return_meta)
-        self.result_dir = result_dir
-        self.report_dir = report_dir
+        self.result_dir = os.path.join(result_dir, "TrackingNet")
+        self.report_dir = os.path.join(report_dir, "TrackingNet")
 
         # as nbins_iou increases, the success score
         # converges to the average overlap (AO)
         self.nbins_iou = 21
         self.nbins_ce = 51
+
+        self.start_idx = start_idx
+        self.end_idx = end_idx
+
+        self.use_confs = False
+        self.has_groundtruth = False
 
     # def _calc_metrics(self, boxes, anno):
     #     valid = ~np.any(np.isnan(anno), axis=1)

@@ -70,7 +70,10 @@ class ExperimentOTB(object):
             else:
                 boxes, times = tracker.track(
                     img_files, anno[0, :], visualize=visualize)
-                assert len(boxes) == len(anno)
+                if hasattr(self, "has_groundtruth") and not self.has_groundtruth:
+                    pass
+                else:
+                    assert len(boxes) == len(anno)
 
             if hasattr(tracker, 'set_video_name'):
                 tracker.set_video_name(None)
