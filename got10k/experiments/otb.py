@@ -280,7 +280,7 @@ class ExperimentOTB(object):
                             linewidth=4)
             lines.append(line)
             legends.append('%s: [%.3f]' % (name, performance[name][key]['success_score']))
-        matplotlib.rcParams.update({'font.size': 11.0})
+        matplotlib.rcParams.update({'font.size': 15.0})
         legend = ax.legend(lines, legends, loc='lower left')
 
         matplotlib.rcParams.update({'font.size': 11})
@@ -288,8 +288,8 @@ class ExperimentOTB(object):
                ylabel='Success rate',
                xlim=(0, 1), ylim=(0, 1),
                title='Success plots of OPE')
-        ax.xaxis.label.set_size(13)
-        ax.yaxis.label.set_size(13)
+        ax.xaxis.label.set_size(14)
+        ax.yaxis.label.set_size(14)
         ax.grid(True)
         fig.tight_layout()
         
@@ -318,7 +318,7 @@ class ExperimentOTB(object):
                             linewidth=4)
             lines.append(line)
             legends.append('%s: [%.3f]' % (name, performance[name][key]['precision_score']))
-        matplotlib.rcParams.update({'font.size': 11.0})
+        matplotlib.rcParams.update({'font.size': 15.0})
         legend = ax.legend(lines, legends, loc='lower right')
         
         matplotlib.rcParams.update({'font.size': 11})
@@ -326,8 +326,8 @@ class ExperimentOTB(object):
                ylabel='Precision',
                xlim=(0, thr_ce.max()), ylim=(0, 1),
                title='Precision plots of OPE')
-        ax.xaxis.label.set_size(13)
-        ax.yaxis.label.set_size(13)
+        ax.xaxis.label.set_size(14)
+        ax.yaxis.label.set_size(14)
         ax.grid(True)
         fig.tight_layout()
         
