@@ -13,3 +13,4 @@ from .trackingnet import ExperimentTrackingNet
 
 from .davis import ExperimentDAVIS
 from .youtubevos import ExperimentYouTubeVOS
+from .oxuva_experiment import ExperimentOxuva

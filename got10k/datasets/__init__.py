@@ -13,3 +13,4 @@ from .vid import ImageNetVID
 
 from .davis import DAVIS_Like, DAVIS
 from .youtubevos import YouTubeVOS
+from .oxuva_dataset import Oxuva

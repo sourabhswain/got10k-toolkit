@@ -39,6 +39,7 @@ class ExperimentOTB(object):
         if end_idx is None:
             self.end_idx = 100
         self.use_confs = False
+        self.dump_as_csv = False
 
     def run(self, tracker, visualize=False):
         print('Running tracker %s on %s...' % (
@@ -55,6 +56,8 @@ class ExperimentOTB(object):
             # skip if results exist
             record_file = os.path.join(
                 self.result_dir, tracker.name, '%s.txt' % seq_name)
+            if hasattr(self, "dump_as_csv") and self.dump_as_csv:
+                record_file = record_file.replace(".txt", ".csv").replace("___", "_")
             if os.path.exists(record_file):
                 print('  Found results, skipping', seq_name)
                 continue
@@ -66,7 +69,10 @@ class ExperimentOTB(object):
             if hasattr(self, "use_confs") and self.use_confs:
                 boxes, times, confs = tracker.track(
                     img_files, anno[0, :], visualize=visualize, use_confidences=True)
-                assert len(boxes) == len(anno) == len(confs)
+                if hasattr(self, "has_groundtruth") and not self.has_groundtruth:
+                    pass
+                else:
+                    assert len(boxes) == len(anno) == len(confs)
             else:
                 boxes, times = tracker.track(
                     img_files, anno[0, :], visualize=visualize)
@@ -202,7 +208,7 @@ class ExperimentOTB(object):
                            colors=['w', 'r', 'g', 'b', 'c', 'm', 'y',
                                    'orange', 'purple', 'brown', 'pink'])
 
-    def _record(self, record_file, boxes, times):
+    def _record(self, record_file, boxes, times, confs=None):
         # record bounding boxes
         record_dir = os.path.dirname(record_file)
         if not os.path.isdir(record_dir):
@@ -212,6 +218,16 @@ class ExperimentOTB(object):
             print('warning: recording failed, retrying...')
             np.savetxt(record_file, boxes, fmt='%.3f', delimiter=',')
         print('  Results recorded at', record_file)
+
+        # record confidences (if available)
+        if confs is not None:
+            # convert confs to string
+            lines = ['%.4f' % c for c in confs]
+            lines[0] = ''
+
+            conf_file = record_file.replace(".txt", "_confidence.value")
+            with open(conf_file, 'w') as f:
+                f.write(str.join('\n', lines))
 
         # record running times
         time_dir = os.path.join(record_dir, 'times')
