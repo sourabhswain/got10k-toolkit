@@ -45,6 +45,8 @@ class ExperimentOTB(object):
         print('Running tracker %s on %s...' % (
             tracker.name, type(self.dataset).__name__))
 
+        #self.use_confs=False
+
         end_idx = self.end_idx
         if end_idx is None:
             end_idx = len(self.dataset)
@@ -84,6 +86,7 @@ class ExperimentOTB(object):
             if hasattr(tracker, 'set_video_name'):
                 tracker.set_video_name(None)
             
+            #self.use_confs=False
             # record results
             if hasattr(self, 'use_confs') and self.use_confs:
                 self._record(record_file, boxes, times, confs)
